@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 10px 10px;
+        }
+        label{
+            display:inline-block;
+            width:100%;
+            font-weight: bold;
+        }
+        input {
+            width: 10%;
+        }
+        button {
+            width: 100px;
+        }
+        .btnArea {
+            width: 100%;
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+        }
+        .outputDiv {
+            width: 50%;
+            margin: 0px 5%;
+            flex: 1;
+        }
+        .inputDiv {
+            width: 50%;
+            flex: 1;
+        }
+        .container {
+            margin-top: 20px;
+            width: 90%;
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <h2>XOR</h2> 
+    <label>[XOR Data (16진수)]</label>
+    <input type="text" id="convertXORData" maxlength="2">
+    <button id="btnXOR" onclick="xordata()">XOR</button>
+
+    <div class="container">
+        <div class ="inputDiv">
+        <label>[input Data]</label>
+            <textarea class="data" name="inputData" id="inputData" rows="30" cols="70"></textarea><br>
+        </div>
+        <div class ="outputDiv">
+            <label>[XOR result Data]</label>
+            <textarea class="data" name="xordata" id="xordata" rows="30" cols="70"></textarea><br>
+        </div>
+    </div>
+
+    <div>
+        <label>[ 사용법 ]</label>
+        <p>1. XOR Data 에 16진수 값만 입력 ("0xCD" => CD ) *최대2글자*</p>
+        <p>2. input Data 값에 XOR 할 값들 입력 (만약 한번에 여러개를 할때는 "enter"무조건 해줘야 따로 XOR 함)</p>
+        <p>3. 결과는 hex string으로 나옵니다. (대문자로 나오며 "," 붙여서 나옴)</p>
+        <p>4. 여러개 돌렸을 경우에는 "\n" 포함하기 때문에 끊어서 나옴 </p>
+    </div>
+</body>
+<script>
+    function bytesToHex(bytes) {
+        for (var hex = [], i = 0; i < bytes.length; i++) {
+            var current = bytes[i] < 0 ? bytes[i] + 256 : bytes[i];
+            hex.push((current >>> 4).toString(16));
+            hex.push((current & 0xF).toString(16));
+        }
+        return hex.join("");
+    }
+
+    function bytesToHex2(bytes) {
+        for (var hex = [], i = 0; i < bytes.length; i++) {
+            var current = bytes[i] < 0 ? bytes[i] + 256 : bytes[i];
+            if(i == 0 ){
+                hex.push("0x");
+            } else {
+                hex.push(",0x");
+            }
+            hex.push((current >>> 4).toString(16).toUpperCase());
+            hex.push((current & 0xF).toString(16).toUpperCase());
+            if(i == bytes.length-1) {
+                hex.push(",\n");
+            }
+        }
+        return hex.join("");
+    }
+    function xordata(){
+        var plain = document.getElementById("inputData").value;
+        var plainarr = plain.split("\n");
+        var result = [];        
+        
+        let textEncode = new TextEncoder();
+        var XORconvertData = document.getElementById("convertXORData").value;
+
+        for(var i=0; i<plainarr.length; i++) {
+            let hexdata = bytesToHex(textEncode.encode(plainarr[i]));
+            xorresult = [];
+            for(var j=0; j<hexdata.length; j+=2){
+                xorresult.push('0x' + hexdata.slice(j, j+2) ^ '0x' + XORconvertData);
+            }
+            result.push(bytesToHex2(xorresult));
+        }
+        document.getElementById("xordata").value = result.join(""); 
+    }
+</script>
+</html>
